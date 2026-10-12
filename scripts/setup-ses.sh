@@ -39,7 +39,7 @@ TOPIC_ARN=$(aws sns create-topic --name "$TOPIC_NAME" --query TopicArn --output 
 aws sns set-topic-attributes --topic-arn "$TOPIC_ARN" --attribute-name SignatureVersion --attribute-value 2
 aws sns set-topic-attributes --topic-arn "$TOPIC_ARN" --attribute-name Policy --attribute-value "$(cat <<EOF
 {"Version":"2012-10-17","Statement":[
- {"Sid":"Owner","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::${ACCOUNT_ID}:root"},"Action":"sns:*","Resource":"${TOPIC_ARN}"},
+ {"Sid":"Owner","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::${ACCOUNT_ID}:root"},"Action":["SNS:GetTopicAttributes","SNS:SetTopicAttributes","SNS:AddPermission","SNS:RemovePermission","SNS:DeleteTopic","SNS:Subscribe","SNS:ListSubscriptionsByTopic","SNS:Publish"],"Resource":"${TOPIC_ARN}"},
  {"Sid":"SesPublish","Effect":"Allow","Principal":{"Service":"ses.amazonaws.com"},"Action":"sns:Publish","Resource":"${TOPIC_ARN}",
   "Condition":{"StringEquals":{"AWS:SourceAccount":"${ACCOUNT_ID}"}}}]}
 EOF
