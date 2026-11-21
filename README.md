@@ -96,7 +96,7 @@ Plan for about an hour, most of it waiting for DNS and for AWS to approve produc
 2. Fill in `MONGODB_URI`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (at least 12 characters) and `SESSION_SECRET` (at least 32; generate it with `openssl rand -base64 48`). With shorter ones, Mailcheap refuses to start and the logs say which one to fix.
 3. Open `https://<your-project>.vercel.app/login` and log in.
 
-Sending is off until you finish the next steps, so nothing can go out by mistake. On any other Node.js host: `npm ci && npm run build && npm start`, with the same variables, behind HTTPS.
+Sending is off until you finish the next steps, so nothing can go out by mistake. On any other Node.js host, with [Bun](https://bun.sh) installed: `bun install --frozen-lockfile && bun run build && bun run start`, with the same variables, behind HTTPS.
 
 If you plan to use your own domain for the dashboard (like `mailcheap.example.com`), add it in Vercel now and set `APP_URL` to it. Links in your emails use `APP_URL`, so it should be final before your first send.
 
@@ -163,18 +163,20 @@ QStash calls `APP_URL/api/jobs/...` to send each batch, so the app has to be rea
 
 ## Local development
 
+You need [Bun](https://bun.sh) for installs and scripts, and Node.js 22 or newer, which Next.js runs on.
+
 ```bash
 git clone https://github.com/<you>/mailcheap.git && cd mailcheap
-npm install
+bun install
 cp .env.example .env.local   # set MONGODB_URI, ADMIN_EMAIL, ADMIN_PASSWORD, SESSION_SECRET
-npm run dev
+bun run dev
 ```
 
 A local MongoDB works: `docker run -d -p 27017:27017 mongo` and `MONGODB_URI=mongodb://127.0.0.1:27017/mailcheap`.
 
 - Sending stays off locally unless you set `SENDING_ENABLED=true`. When the SES keys are empty, the AWS SDK falls back to your default AWS credentials (`~/.aws`), so the domains page can show real data.
-- QStash can't reach `localhost`. To try a full send locally, run the QStash dev server (`npx @upstash/qstash-cli dev`) and use the URL, token and signing keys it prints.
-- `npm test` runs the unit tests and `npm run lint` runs ESLint.
+- QStash can't reach `localhost`. To try a full send locally, run the QStash dev server (`bunx @upstash/qstash-cli dev`) and use the URL, token and signing keys it prints.
+- `bun run test` runs the unit tests and `bun run lint` runs ESLint.
 
 ## Deliverability basics
 
